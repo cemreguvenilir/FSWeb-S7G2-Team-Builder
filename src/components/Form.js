@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import React from "react";
 
 const initialForm = {
   name: "",
@@ -10,6 +11,14 @@ const initialForm = {
 function Form(props) {
   //const { addMember } = props;
   const [formData, setFormData] = useState(initialForm);
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    console.log("yeniden render");
+    props.editMode ? setFormData(props.editMode) : setFormData(initialForm);
+
+    props.editMode ? setIsEditing(true) : setIsEditing(false);
+  }, [props.editMode]);
 
   function changeHandler(e) {
     console.log(e.target.value);
@@ -22,9 +31,12 @@ function Form(props) {
   function submitHandler(e) {
     e.preventDefault();
     props.addMember(formData);
+    setIsEditing(false);
+    setFormData(initialForm);
   }
   return (
     <div>
+      {isEditing ? <h3>Üye Düzenle</h3> : <h3>Yeni Üye Ekle</h3>}
       <form onSubmit={submitHandler}>
         <div className="form-line">
           <label htmlFor="name">First name: </label>
@@ -66,7 +78,9 @@ function Form(props) {
             value={formData.position}
           />
         </div>
-        <button type="submit">Üye Ekle</button>
+        <button className="submit" type="submit">
+          {isEditing ? "Üye Düzenle" : "Yeni Üye Ekle"}
+        </button>
       </form>{" "}
     </div>
   );

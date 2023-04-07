@@ -4,6 +4,8 @@ import { useState } from "react";
 import Form from "./components/Form";
 import React from "react";
 function App() {
+  const [editingMember, setEditingMember] = useState();
+  const [editingOrder, setEditingOrder] = useState();
   const [members, setMembers] = useState([
     {
       name: "Cemre",
@@ -20,8 +22,22 @@ function App() {
   ]);
   function addMember(newMember) {
     console.log("newMember", newMember);
-    setMembers([...members, newMember]);
+
+    if (editingOrder !== undefined) {
+      const upDatedMembers = [...members];
+      upDatedMembers.splice(editingOrder, 1, newMember);
+      setMembers(upDatedMembers);
+    } else {
+      setMembers([...members, newMember]);
+    }
+    setEditingOrder();
   }
+
+  function editForm(member, order) {
+    setEditingMember(member);
+    setEditingOrder(order);
+  }
+
   return (
     <div className="App App-header">
       <ul>
@@ -32,11 +48,14 @@ function App() {
                 {" "}
                 {member.name} {member.surname} - {member.position}{" "}
               </a>{" "}
+              <button onClick={() => editForm(member, i)} className="edit">
+                Edit
+              </button>
             </li>
           );
         })}
       </ul>
-      <Form addMember={addMember} />
+      <Form addMember={addMember} editMode={editingMember} />
     </div>
   );
 }
